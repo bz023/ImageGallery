@@ -65,40 +65,45 @@ public class HtmlGenerator
         sb.AppendLine(".container { display: flex; flex-wrap: wrap; }");
         sb.AppendLine("</style></head><body>");
         
-        sb.AppendLine($"<h1><a href='{homePage}'>Főoldal</a></h1>");
-        if (!dir.MainPage)
-        {
-            sb.AppendLine($"<h2><a href='../index.html'>Vissza</a></h2>");
-        }
+        sb.AppendLine($"<h1><a href='{homePage}'>Főoldal</a></h1><hr>");
         
-        sb.AppendLine($"<h1>Mappa: {dir.FullPath}</h1>");
+        sb.AppendLine($"<h3>Jelenlegi könyvtár: {dir.FullPath}</h1>");
 
         // Almappák
-        sb.AppendLine("<h2>Almappák</h2><ul>");
-        if (dir.Subdirectories.Count == 0)
-        {
-            sb.AppendLine("<li>(nincsenek almappák)</li>");
-        }
-        else
+        sb.AppendLine("<h2>Almappák</h2><ul style='list-style-type: none;'>");
+        if (dir.Subdirectories.Count > 0)
         {
             foreach (var sub in dir.Subdirectories)
             {
-                sb.AppendLine($"<li><a href='./{sub.Name}/index.html'>{sub.Name}</a></li>");
+                sb.AppendLine($"<li>&#8627;<a href='./{sub.Name}/index.html'>{sub.Name}</a></li>");
             }
+        }
+        if (!dir.MainPage)
+        {
+            sb.AppendLine($"<li><a href='../index.html'>&#8629;Vissza</a></li>");
         }
         sb.AppendLine("</ul>");
 
         // Képek
         sb.AppendLine("<h2>Képek</h2><div class='container'>");
 
+        sb.AppendLine("<ul style='list-style-type: none;'>");
         foreach (var img in dir.Images)
         {
-            sb.AppendLine($@"
+            /*
+             sb.AppendLine($@"
                 <a href='{img.Name}.html'>
                     <img class='thumb' src='{img.Name}'>
                     <br>{img.Name}
                 </a>");
+                */
+            sb.AppendLine($@"<li>&#8618;
+                <a href='{img.Name}.html'>
+                   {img.Name}
+                </a></li>");
         }
+
+        sb.AppendLine("</ul>");
 
         if (dir.Images.Count == 0)
             sb.AppendLine("<p>(nincsenek képek ebben a mappában)</p>");
@@ -111,6 +116,8 @@ public class HtmlGenerator
     private void GenerateImagePage(GalleryDirectory dir, int index)
     {
         var img = dir.Images[index];
+        string homePage = MainDirPath + "/index.html";
+
         _logger.Debug($"Képfájl oldal generálása: {img.FullPath}");
 
         string prev = index > 0 ? dir.Images[index - 1].Name + ".html" : "index.html";
@@ -128,13 +135,16 @@ public class HtmlGenerator
     </style>
 </head>
 <body>
-    <h1>{img.Name}</h1>
+
+    <h1><a href='{homePage}'>Főoldal</a></h1><hr>
+    <a class='nav' style='text-decoration:none;' href='index.html'>&#8682;</a>
+    <hr>
     <div>
-        <a class='nav' href='{prev}'>&larr; Előző</a>
-        <a class='nav' href='index.html'>Vissza</a>
-        <a class='nav' href='{next}'>Következő &rarr;</a>
+        <a class='nav' style='text-decoration:none;' href='{prev}'>&#8678;</a>
+        <b class='nav'>{img.Name}</b>
+        <a class='nav' style='text-decoration:none;' href='{next}'>&#8680;</a>
     </div>
-    <img src='{img.Name}'>
+    <a href='{next}'><img src='{img.Name}'></a>
 </body>
 </html>";
 
