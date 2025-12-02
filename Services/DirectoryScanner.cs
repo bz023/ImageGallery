@@ -5,7 +5,7 @@ namespace ImageGallery.Services;
 public class DirectoryScanner
 {
     private readonly Logger _logger;
-    private static readonly string[] ImageExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp" };
+    private static readonly string[] ImageExtensions = [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp"];
 
     public DirectoryScanner(Logger logger)
     {
@@ -16,9 +16,17 @@ public class DirectoryScanner
     {
         _logger.Debug($"Könyvtár beolvasása: {path}");
 
-        var dir = new GalleryDirectory(path) { Parent = parent };
 
-        // Képfájlok gyűjtése
+        GalleryDirectory dir;
+        if (parent == null)
+        {
+            dir = new GalleryDirectory(path, true) { Parent = null };
+        }
+        else
+        {
+            dir = new GalleryDirectory(path) { Parent = parent };
+        }
+
         foreach (var file in Directory.GetFiles(path))
         {
             string ext = Path.GetExtension(file).ToLower();

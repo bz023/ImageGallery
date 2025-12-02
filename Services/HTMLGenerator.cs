@@ -6,6 +6,7 @@ namespace ImageGallery.Services;
 public class HtmlGenerator
 {
     private readonly Logger _logger;
+    public string? MainDirPath;
 
     public HtmlGenerator(Logger logger)
     {
@@ -23,7 +24,16 @@ public class HtmlGenerator
 
     private void GenerateDirectoryHtml(GalleryDirectory dir)
     {
-        _logger.Debug($"Index generálása: {dir.FullPath}");
+        if (dir.MainPage)
+        {
+            _logger.Debug($"Főindex generálása: {dir.FullPath}");
+            MainDirPath = dir.FullPath;
+        }
+        else
+        {
+            _logger.Debug($"Alindex generálása: {dir.FullPath}");   
+        }
+        
 
         // index.html létrehozása ebben a mappában
         string indexPath = Path.Combine(dir.FullPath, "index.html");
@@ -46,6 +56,7 @@ public class HtmlGenerator
     {
         var sb = new StringBuilder();
 
+        string homePage = MainDirPath + "/index.html";
         sb.AppendLine("<html><head><meta charset='UTF-8'>");
         sb.AppendLine($"<title>{dir.Name}</title>");
         sb.AppendLine("<style>");
@@ -53,7 +64,13 @@ public class HtmlGenerator
         sb.AppendLine(".thumb { width: 200px; margin: 10px; }");
         sb.AppendLine(".container { display: flex; flex-wrap: wrap; }");
         sb.AppendLine("</style></head><body>");
-
+        
+        sb.AppendLine($"<h1><a href='{homePage}'>Főoldal</a></h1>");
+        if (!dir.MainPage)
+        {
+            sb.AppendLine($"<h2><a href='../index.html'>Vissza</a></h2>");
+        }
+        
         sb.AppendLine($"<h1>Mappa: {dir.FullPath}</h1>");
 
         // Almappák

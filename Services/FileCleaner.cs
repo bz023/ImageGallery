@@ -26,7 +26,7 @@ public class FileCleaner
             }
             catch (Exception ex)
             {
-                _logger.Info($"Nem sikerült törölni: {f} [{ex.Message}]");
+                _logger.Error($"Nem sikerült törölni: {f} [{ex.Message}]");
             }
         }
     }

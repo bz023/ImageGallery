@@ -14,7 +14,7 @@ internal class Program
             return;
         }
 
-        string root = args[0];
+        var root = args[0];
         if (!Directory.Exists(root))
         {
             Console.WriteLine($"Hiba: A megadott mappa nem létezik: {root}");
@@ -35,16 +35,10 @@ internal class Program
             logger = new Logger();
         }
 
-
-        // Szervízosztályok példányosítása
+        // --purge kapcsoló lekezelése
 
         var cleaner = new FileCleaner(logger);
-        var scanner = new DirectoryScanner(logger);
-        var generator = new HtmlGenerator(logger);
 
-        
-        // --purge kapcsoló lekezelése
-        
         if (args.Contains("--purge"))
         {
             cleaner.DeleteHtmlFiles(root);
@@ -52,8 +46,10 @@ internal class Program
             return;
         }
 
-        logger.Info($"Gyökérmappa: {root}");
+        var scanner = new DirectoryScanner(logger);
+        var generator = new HtmlGenerator(logger);
 
+        logger.Info($"Gyökérmappa: {root}");
 
         // Előző fájlok törlése
         cleaner.DeleteHtmlFiles(root);
@@ -65,5 +61,6 @@ internal class Program
         generator.GenerateGallery(rootDir);
 
         logger.Info("Kész!");
+        logger.Info($"A főoldalt a(z) {root+"/index.html"} fájlnév alatt találod.");
     }
 }

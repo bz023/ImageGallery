@@ -19,4 +19,9 @@ public class Logger
         if (_enabled)
             Console.WriteLine("[DEBUG] " + msg);
     }
+    public void Error(string msg)
+    {
+        if (_enabled)
+            Console.WriteLine("[ERROR] " + msg);
+    }
 }

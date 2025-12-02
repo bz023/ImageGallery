@@ -6,6 +6,8 @@ public class GalleryDirectory
     public string Name;
     public GalleryDirectory? Parent { get; set; }
 
+    public bool MainPage = false;
+
     public List<GalleryDirectory> Subdirectories { get; } = new();
     public List<ImageFile> Images { get; } = new();
 
@@ -13,5 +15,12 @@ public class GalleryDirectory
     {
         FullPath = fullPath;
         Name = Path.GetFileName(FullPath);
+        MainPage = false;
+    }
+    public GalleryDirectory(string fullPath, bool mainPage)
+    {
+        FullPath = fullPath;
+        Name = Path.GetFileName(FullPath);
+        MainPage = mainPage;
     }
 }
