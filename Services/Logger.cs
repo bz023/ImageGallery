@@ -6,7 +6,7 @@ public class Logger
 
     public Logger(bool enabled = false)
     {
-        _enabled = enabled;
+        _enabled = enabled; //--debug kapcsoló
     }
 
     public void Info(string msg)

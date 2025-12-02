@@ -6,8 +6,8 @@ namespace ImageGallery.Services;
 public class HtmlGenerator
 {
     private readonly Logger _logger;
-    private string? _mainDirPath;
-    private readonly bool _showThumbs;
+    private string? _mainDirPath; //Főkönyvtár elérési útja
+    private readonly bool _showThumbs; //showThumbs kapcsoló állapota
     public HtmlGenerator(Logger logger, bool showThumbs)
     {
         _logger = logger;
@@ -29,14 +29,14 @@ public class HtmlGenerator
 
     private void GenerateDirectoryHtml(GalleryDirectory dir)
     {
-        if (dir.MainPage)
+        if (dir.MainPage) //Főoldal lekezelése + főoldal elérési útjának lementése a _mainDirPath változóba
         {
-            _logger.Debug($"Főindex generálása: {dir.FullPath}");
+            _logger.Debug($"Főoldal generálása: {dir.FullPath}");
             _mainDirPath = dir.FullPath;
         }
         else
         {
-            _logger.Debug($"Alindex generálása: {dir.FullPath}");   
+            _logger.Debug($"Index generálása: {dir.FullPath}");   
         }
         
 
@@ -83,7 +83,7 @@ public class HtmlGenerator
                 sb.AppendLine($"<li>&#8627;<a href='./{sub.Name}/index.html'>{sub.Name}</a></li>");
             }
         }
-        if (!dir.MainPage)
+        if (!dir.MainPage) //Főoldalon nem lehet hova "visszább" menni, viszont minden máshol van parent könyvtár
         {
             sb.AppendLine($"<li><a href='../index.html'>&#8629;Vissza</a></li>");
         }
@@ -92,14 +92,14 @@ public class HtmlGenerator
         // Képek
         sb.AppendLine("<h2>Képek</h2><div class='container'>");
 
-        if(!_showThumbs)
+        if(!_showThumbs) //showThumbs nélkül listára van szükség
             sb.AppendLine("<ul style='list-style-type: none;'>");
         
         foreach (var img in dir.Images)
         {
             if (_showThumbs)
             {
-                
+              //--showThumbs kapcsoló itt kap szerepet  
               sb.AppendLine($@"
                  <a href='{img.Name}.html'>
                      <img class='thumb' src='{img.Name}'>
@@ -108,7 +108,7 @@ public class HtmlGenerator
          
             }
             else
-            {
+            { //Eredeti feladat szerinti kiírás
                 sb.AppendLine($@"<li>&#8618;
                 <a href='{img.Name}.html'>
                    {img.Name}
@@ -119,7 +119,7 @@ public class HtmlGenerator
         if(!_showThumbs)
             sb.AppendLine("</ul>");
 
-        if (dir.Images.Count == 0)
+        if (dir.Images.Count == 0) //üres mappa
             sb.AppendLine("<p>(nincsenek képek ebben a mappában)</p>");
 
         sb.AppendLine("</div></body></html>");
@@ -134,7 +134,9 @@ public class HtmlGenerator
 
         _logger.Debug($"Képfájl oldal generálása: {img.FullPath}");
 
+        //Ha van előző kép, akkor arra mutat, ha nincs, akkor visszalép a parent könyvtár index.html-jére
         string prev = index > 0 ? dir.Images[index - 1].Name + ".html" : "index.html";
+        //Ugyanez csak fordítva, ha van következő akkor arra a képre lép, ha nincs, akkor szintén a parentre
         string next = index < dir.Images.Count - 1 ? dir.Images[index + 1].Name + ".html" : "index.html";
 
         string html = $@"
