@@ -21,7 +21,6 @@ public class Logger
     }
     public void Error(string msg)
     {
-        if (_enabled)
             Console.WriteLine("[ERROR] " + msg);
     }
 }

@@ -3,10 +3,10 @@ namespace ImageGallery.Models;
 public class GalleryDirectory
 {
     public string FullPath { get; }
-    public string Name;
+    public readonly string Name;
     public GalleryDirectory? Parent { get; set; }
 
-    public bool MainPage = false;
+    public readonly bool MainPage;
 
     public List<GalleryDirectory> Subdirectories { get; } = new();
     public List<ImageFile> Images { get; } = new();

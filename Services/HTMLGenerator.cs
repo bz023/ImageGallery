@@ -6,8 +6,13 @@ namespace ImageGallery.Services;
 public class HtmlGenerator
 {
     private readonly Logger _logger;
-    public string? MainDirPath;
-
+    private string? _mainDirPath;
+    private readonly bool _showThumbs;
+    public HtmlGenerator(Logger logger, bool showThumbs)
+    {
+        _logger = logger;
+        _showThumbs = showThumbs;
+    }
     public HtmlGenerator(Logger logger)
     {
         _logger = logger;
@@ -27,7 +32,7 @@ public class HtmlGenerator
         if (dir.MainPage)
         {
             _logger.Debug($"Főindex generálása: {dir.FullPath}");
-            MainDirPath = dir.FullPath;
+            _mainDirPath = dir.FullPath;
         }
         else
         {
@@ -56,7 +61,7 @@ public class HtmlGenerator
     {
         var sb = new StringBuilder();
 
-        string homePage = MainDirPath + "/index.html";
+        string homePage = _mainDirPath + "/index.html";
         sb.AppendLine("<html><head><meta charset='UTF-8'>");
         sb.AppendLine($"<title>{dir.Name}</title>");
         sb.AppendLine("<style>");
@@ -87,23 +92,32 @@ public class HtmlGenerator
         // Képek
         sb.AppendLine("<h2>Képek</h2><div class='container'>");
 
-        sb.AppendLine("<ul style='list-style-type: none;'>");
+        if(!_showThumbs)
+            sb.AppendLine("<ul style='list-style-type: none;'>");
+        
         foreach (var img in dir.Images)
         {
-            /*
-             sb.AppendLine($@"
-                <a href='{img.Name}.html'>
-                    <img class='thumb' src='{img.Name}'>
-                    <br>{img.Name}
-                </a>");
-                */
-            sb.AppendLine($@"<li>&#8618;
+            if (_showThumbs)
+            {
+                
+              sb.AppendLine($@"
+                 <a href='{img.Name}.html'>
+                     <img class='thumb' src='{img.Name}'>
+                     <br>{img.Name}
+                 </a>");
+         
+            }
+            else
+            {
+                sb.AppendLine($@"<li>&#8618;
                 <a href='{img.Name}.html'>
                    {img.Name}
                 </a></li>");
+            }
         }
-
-        sb.AppendLine("</ul>");
+        
+        if(!_showThumbs)
+            sb.AppendLine("</ul>");
 
         if (dir.Images.Count == 0)
             sb.AppendLine("<p>(nincsenek képek ebben a mappában)</p>");
@@ -116,7 +130,7 @@ public class HtmlGenerator
     private void GenerateImagePage(GalleryDirectory dir, int index)
     {
         var img = dir.Images[index];
-        string homePage = MainDirPath + "/index.html";
+        string homePage = _mainDirPath + "/index.html";
 
         _logger.Debug($"Képfájl oldal generálása: {img.FullPath}");
 

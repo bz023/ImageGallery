@@ -6,11 +6,12 @@ internal class Program
 {
     private static void Main(string[] args)
     {
-        if (args.Length == 0 || args.Length > 3)
+        if (args.Length == 0 || args.Length > 4)
         {
             Console.WriteLine("Használat: ImageGallery <mappa_elérési_út> <kapcsoló>");
-            Console.WriteLine("<kapcsoló>\t --purge : HTML fájlok törlése a megadott elérési úton.");
+            Console.WriteLine("Kapcsolók:\n\t--clear : HTML fájlok törlése a megadott elérési úton.");
             Console.WriteLine("\t--debug : Debug üzenetek bekapcsolása.");
+            Console.WriteLine("\t--showThumbs : Előnézeti képek bekapcsolása.");
             return;
         }
 
@@ -21,7 +22,7 @@ internal class Program
             return;
         }
 
-        // Logger kapcsoló lekezelése
+        // --debug kapcsoló lekezelése
 
         Logger logger;
 
@@ -35,19 +36,30 @@ internal class Program
             logger = new Logger();
         }
 
-        // --purge kapcsoló lekezelése
+        // --clear kapcsoló lekezelése
 
         var cleaner = new FileCleaner(logger);
 
-        if (args.Contains("--purge"))
+        if (args.Contains("--clear"))
         {
             cleaner.DeleteHtmlFiles(root);
             logger.Info($"HTML fájlok törölve a megadott könyvtárból. ({root})");
             return;
         }
+        
+        // --showThumbs kapcsoló : előnézeti képeket jelenít meg az index oldalakon
+        HtmlGenerator generator;
+        if (args.Contains("--showThumbs"))
+        {
+            generator = new HtmlGenerator(logger, true);
+        }
+        else
+        {
+            generator = new HtmlGenerator(logger);
+        }
 
         var scanner = new DirectoryScanner(logger);
-        var generator = new HtmlGenerator(logger);
+        //var generator = new HtmlGenerator(logger);
 
         logger.Info($"Gyökérmappa: {root}");
 
