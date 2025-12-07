@@ -19,7 +19,7 @@ A programot parancssorból lehet futtatni. Mindig a **mappa elérési útja** az
 ### Szintaxis
 
 ```bash
-dotnet run -- [mappa_elérési_út] [kapcsolók]
+dotnet run [mappa_elérési_út] [kapcsolók]
 ```
 ### 🔧 Elérhető Kapcsolók
 
