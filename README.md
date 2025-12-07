@@ -7,7 +7,7 @@ Ez a konzolalkalmazás egy megadott helyi könyvtárban generál, illetve abból
 * **Helyi Működés (In-Place):** A generálás és a takarítás is a megadott forráskönyvtárban történik.
 * **Generálás:** Rekurzívan bejárja az almappákat, létrehozva a navigációs fájlokat (`index.html` és képoldalak).
 * **Takarítás (`--clear`):** Lehetővé teszi a korábban generált HTML fájlok egyszerű és gyors eltávolítását.
-* **Választható Nézet (`--clear`):** Bélyegképes (thumbnail) vagy listanézet.
+* **Választható Nézet (`--showThumbs`):** Bélyegképes (thumbnail) vagy listanézet.
 * **Hibakeresés (`--debug`):** Részletes logolás a konzolra a hibák nyomon követéséhez.
 
 ---
