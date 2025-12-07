@@ -29,16 +29,21 @@ public class HtmlGenerator
 
     private void GenerateDirectoryHtml(GalleryDirectory dir)
     {
+
         if (dir.MainPage) //Főoldal lekezelése + főoldal elérési útjának lementése a _mainDirPath változóba
         {
             _logger.Debug($"Főoldal generálása: {dir.FullPath}");
-            _mainDirPath = dir.FullPath;
+
+            _mainDirPath = Path.GetFullPath(dir.FullPath);
+            
         }
         else
         {
-            _logger.Debug($"Index generálása: {dir.FullPath}");   
+            _logger.Debug($"Index oldal generálása: {dir.FullPath}");   
         }
         
+        if (_mainDirPath == null)
+            throw new InvalidOperationException("Main directory path was not initialized.");
 
         // index.html létrehozása ebben a mappában
         string indexPath = Path.Combine(dir.FullPath, "index.html");
@@ -61,8 +66,9 @@ public class HtmlGenerator
     {
         var sb = new StringBuilder();
 
-        string homePage = _mainDirPath + "/index.html";
-        sb.AppendLine("<html><head><meta charset='UTF-8'>");
+        string homePage = Path.GetRelativePath(dir.FullPath, Path.Combine(_mainDirPath, "index.html"));
+        
+        sb.AppendLine("<!DOCTYPE html><html><head><meta charset='UTF-8'>");
         sb.AppendLine($"<title>{dir.Name}</title>");
         sb.AppendLine("<style>");
         sb.AppendLine("body { font-family: Arial; }");
@@ -72,7 +78,7 @@ public class HtmlGenerator
         
         sb.AppendLine($"<h1><a href='{homePage}'>Főoldal</a></h1><hr>");
         
-        sb.AppendLine($"<h3>Jelenlegi könyvtár: {dir.FullPath}</h1>");
+        //sb.AppendLine($"<h3>Jelenlegi könyvtár: {dir.Name.Replace('/', '→')}</h3>");
 
         // Almappák
         sb.AppendLine("<h2>Almappák</h2><ul style='list-style-type: none;'>");
@@ -130,8 +136,9 @@ public class HtmlGenerator
     private void GenerateImagePage(GalleryDirectory dir, int index)
     {
         var img = dir.Images[index];
-        string homePage = _mainDirPath + "/index.html";
-
+        string homePage = Path.GetRelativePath(dir.FullPath, Path.Combine(_mainDirPath, "index.html"));
+        
+        //Console.WriteLine(homePage);
         _logger.Debug($"Képfájl oldal generálása: {img.FullPath}");
 
         //Ha van előző kép, akkor arra mutat, ha nincs, akkor visszalép a parent könyvtár index.html-jére
@@ -139,7 +146,7 @@ public class HtmlGenerator
         //Ugyanez csak fordítva, ha van következő akkor arra a képre lép, ha nincs, akkor szintén a parentre
         string next = index < dir.Images.Count - 1 ? dir.Images[index + 1].Name + ".html" : "index.html";
 
-        string html = $@"
+        string html = $@"<!DOCTYPE html>
 <html>
 <head>
     <meta charset='UTF-8'>
